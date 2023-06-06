@@ -6,22 +6,30 @@ from base_it import db_it, slavy, text, dalek
 #from stem.control import Controller
 ssl._create_default_https_context = ssl._create_unverified_context
 
-fetched_from = 'arval.it'
+fetched_from = 'cesvi.org'
 
 xtr = '''title
-<title>
-</title>
-city
-class="city">
-</span>
+<h1 class="page-title align-center">
+</h1>
 description
-<div class="job-mission">
-<div class="job-apply">'''
-xtr_url='''url
-<a href="/lavora-con-noi
-"'''
+<div class="entry-content">
+</article>
+extra
+<h4 class="job-details__term">Luogo</h4>
 
-stp = '/lavora-con-noi/ -tutte-le-posizioni -sitemap -vario -people -about'
+city
+<span class="job-details__description">
+</span>'''
+
+xtr_url="""url
+<h3 class="jobsboard-list__title">.*?<a href="
+">
+location
+<dd class="jobsboard-list__location icon-marker">
+</dd>"""
+
+
+stp = 'AAA'
 page_ads =11 
 page_stp = 1
 
@@ -31,7 +39,7 @@ pagination_generator = lambda url: (url.format(page=page) for page in xrange(1, 
 pages = (
     ('Trabajo', {
         'trabajo_subcat': (
-            'https://www.arval.it/lavora-con-noi/tutte-le-posizioni-aperte?name=&field_location_target_id=All&field_contract_type_target_id=All&field_team_category_target_id=All&field_study_level_target_id=All&field_work_experience_level_target_id=All',
+            'https://www.cesvi.org/partecipa/lavora-con-noi/',
         )
     }
      ),
@@ -49,23 +57,14 @@ def crawl(web):
     sl.start(web)
     sl.metaExtract = True
     # sl.step(stp)
-
-
-    req =requests.get(url=web,)
-    datos = req.text
-    # print (datos)
-    # exit(0)
-
-    sl.WR = ['virtual:{0}'.format(datos.encode('utf-8'))]
-    
     sl.extract(xtr_url)
-    sl.WR = ["https://www.arval.it/lavora-con-noi{0}".format(x.get('url', '')) for x in sl.M]
-
+    sl.WR= ["{0}".format(x.get("url", "")) if "BERGAMO" in x.get("location", "").upper() else "" for x in sl.M]
+    sl.WR = filter(None, sl.WR)
     # Para pruebas
     # sl.printWR()
     # sl.printM()
     # sl.printstatus()
-    sl.WR = sl.WR[0:-9]
+    # sl.WR = sl.WR[0:5]
     # exit(0)
 
     if not len(sl.WR):
@@ -116,4 +115,3 @@ if __name__ == "__main__":
     saltcellar = dalek.Dalek(pages, page_ads, fetched_from, db_it, pagination_generator, debug_mode)
     saltcellar.crawl = crawl
     saltcellar.exterminate()
-

@@ -6,23 +6,29 @@ from base_it import db_it, slavy, text, dalek
 #from stem.control import Controller
 ssl._create_default_https_context = ssl._create_unverified_context
 
-fetched_from = 'arval.it'
+fetched_from = 'openteamltd.applytojob.com'
 
-xtr = '''title
-<title>
-</title>
+xtr = '''city
+"addressLocality": "
+"
+title
+<h1>
+</h1>
 city
-class="city">
-</span>
+<li title="Location">
+(, | </li>)
+province
+.*?FI, 
+</li>
+contract
+<li id='resumator-job-employment' title="Type">
+</li>
 description
-<div class="job-mission">
-<div class="job-apply">'''
-xtr_url='''url
-<a href="/lavora-con-noi
-"'''
+<div class='col col-xs-7 description' id="job-description">
+</div>'''
 
-stp = '/lavora-con-noi/ -tutte-le-posizioni -sitemap -vario -people -about'
-page_ads =11 
+stp = '/apply/ -jobs -submit'
+page_ads =10 
 page_stp = 1
 
 pagination_generator = lambda url: (url.format(page=page) for page in xrange(1, 2))
@@ -31,7 +37,7 @@ pagination_generator = lambda url: (url.format(page=page) for page in xrange(1, 
 pages = (
     ('Trabajo', {
         'trabajo_subcat': (
-            'https://www.arval.it/lavora-con-noi/tutte-le-posizioni-aperte?name=&field_location_target_id=All&field_contract_type_target_id=All&field_team_category_target_id=All&field_study_level_target_id=All&field_work_experience_level_target_id=All',
+            'https://openteamltd.applytojob.com/',
         )
     }
      ),
@@ -45,28 +51,18 @@ pages = (
 
 def crawl(web): 
 
+
     sl = slavy.slavy()
     sl.start(web)
     sl.metaExtract = True
-    # sl.step(stp)
-
-
-    req =requests.get(url=web,)
-    datos = req.text
-    # print (datos)
-    # exit(0)
-
-    sl.WR = ['virtual:{0}'.format(datos.encode('utf-8'))]
-    
-    sl.extract(xtr_url)
-    sl.WR = ["https://www.arval.it/lavora-con-noi{0}".format(x.get('url', '')) for x in sl.M]
+    sl.step(stp)
 
     # Para pruebas
-    # sl.printWR()
+    #sl.printWR()
     # sl.printM()
     # sl.printstatus()
-    sl.WR = sl.WR[0:-9]
-    # exit(0)
+    # sl.WR = sl.WR[0:5]
+    #exit(0)
 
     if not len(sl.WR):
         raise Exception('[WARN] Empty web region')
@@ -116,4 +112,3 @@ if __name__ == "__main__":
     saltcellar = dalek.Dalek(pages, page_ads, fetched_from, db_it, pagination_generator, debug_mode)
     saltcellar.crawl = crawl
     saltcellar.exterminate()
-
